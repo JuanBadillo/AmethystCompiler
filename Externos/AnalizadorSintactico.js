@@ -1,0 +1,429 @@
+const fs = require("fs");
+
+const gramaticasIndividuales = {
+  VAL_CONSTANTE: ["CONSTENT", "CONSTRE", "CONSTEX"],
+  VAL_BOLEANO: ["PRB1", "PRB2"],
+  IN_COMENTARIO: ["COMENTARIO"],
+  AUX_OPA: ["OPA1", "OPA2", "OPA3", "OPA4", "OPA5", "OPA6"],
+  AUX_OPR: ["OPR1", "OPR2", "OPR3", "OPR4"],
+  AUX_OPR2: ["OPR5", "OPR6"],
+  AUX_OPL: ["OPL2", "OPL3"],
+};
+
+const gramaticasMultiples = {
+  VAL_CONSTANTE: [
+    "CE6 VAL_CONSTANTE CE7",
+  ],
+
+  VAL_BOLEANO: [
+    "CE6 VAL_BOLEANO CE7",
+  ],
+
+  IN_IO: [
+    "PRI4 IDEN CE13",
+    "PRI5 OP_CONDICION CE13",
+    "PRI5 OP_CADENA_CONCATENACION CE13",
+    "PRI5 CE6 OP_CADENA_CONCATENACION CE7 CE13",
+    "PRI5 CADENA CE13",
+    "PRI5 VAL_CONSTANTE CE13",
+    "PRI5 IDEN CE13",
+    "PRI5 CE6 IDEN CE7 CE13",
+    "PRI5 OP_ARITMETICA CE13",
+    "PRI5 CE6 OPA1 IDEN CE7 CE13",
+    "PRI5 OPA1 IDEN CE13",
+    "PRI5 CE6 OPA2 IDEN CE7 CE13",
+    "PRI5 OPA2 IDEN CE13",
+  ],
+
+  IN_ASIGNACION: [
+    "PRI6 PRV1 IDEN CE13",
+
+    "PRI6 PRV1 IDEN ASIG IDEN CE13",
+    "PRI6 PRV1 IDEN ASIG VAL_CONSTANTE CE13",
+    "PRI6 PRV1 IDEN ASIG OP_CADENA_CONCATENACION CE13",
+    "PRI6 PRV1 IDEN ASIG CADENA CE13",
+    "PRI6 PRV1 IDEN ASIG OP_CONDICION CE13",
+    "PRI6 PRV1 IDEN ASIG OP_ARITMETICA CE13",
+
+    "IDEN ASIG VAL_CONSTANTE CE13",
+    "IDEN ASIG OP_CADENA_CONCATENACION CE13",
+    "IDEN ASIG CADENA CE13",
+    "IDEN ASIG OP_CONDICION CE13",
+    "IDEN ASIG IDEN CE13",
+    "IDEN ASIG OP_ARITMETICA CE13",
+  ],
+
+  AUX_SI: [
+    "CE9 PRI3 PRI2",
+    // "CE9 PRI3 PRI2 OP_CONDICION CE8", //ELSE IF VALOR {
+    // "PRI3 PRI2 OP_CONDICION CE8", //ELSE IF VALOR {
+    // "CE9 PRI3 PRI2 OP_CONDICION", //ELSE IF VALOR
+    // "PRI3 PRI2 OP_CONDICION", //ELSE IF VALOR
+    // "CE9 PRI3 PRI2 OP_CONDICION", //ELSE IF VALOR
+    // "PRI3 PRI2 IDEN CE8", //ELSE IF IDEN
+    // "CE9 PRI3 PRI2 IDEN CE8", //ELSE IF IDEN
+    // "PRI3 PRI2 IDEN", //ELSE IF IDEN
+    // "CE9 PRI3 PRI2 IDEN", //ELSE IF IDEN
+  ],
+
+  IN_SI: [
+    "PRI2 OP_CONDICION CE8", //IF CONDICION {
+    "PRI2 OP_CONDICION", //IF VALOR
+    "PRI2 IDEN CE8", //IF ( IDEN )
+    "PRI2 IDEN", //IF ( IDEN )    
+  ],
+
+  IN_SINOSI: [
+    "AUX_SI OP_CONDICION",
+    "AUX_SI OP_CONDICION CE8"
+  ],
+
+  IN_SINO: [
+    "CE9 PRI3 CE8", //} ELSE {
+    "PRI3 CE8", //ELSE {
+    "CE9 PRI3", //} ELSE
+    "PRI3", //ELSE
+  ],
+
+  AUX_CICLO:[ //Lo que puede estar en medio del ciclo..
+    "IN_ASIGNACION OP_CONDICION CE13 IDEN ASIG VAL_CONSTANTE",
+    "IN_ASIGNACION OP_CONDICION CE13 IDEN ASIG OP_CADENA_CONCATENACION",
+    "IN_ASIGNACION OP_CONDICION CE13 IDEN ASIG OP_CONDICION",
+    "IN_ASIGNACION OP_CONDICION CE13 IDEN ASIG IDEN",
+    "IN_ASIGNACION OP_CONDICION CE13 IDEN ASIG OP_ARITMETICA",
+    
+    "CE13 OP_CONDICION CE13 IDEN ASIG VAL_CONSTANTE",
+    "CE13 OP_CONDICION CE13 IDEN ASIG OP_CADENA_CONCATENACION",
+    "CE13 OP_CONDICION CE13 IDEN ASIG OP_CONDICION",
+    "CE13 OP_CONDICION CE13 IDEN ASIG IDEN",
+    "CE13 OP_CONDICION CE13 IDEN ASIG OP_ARITMETICA",
+  ],
+
+  IN_CICLO:[//Lo del medio mas toda la instruccion..
+    "PRI1 CE6 AUX_CICLO CE7 IN_PARINI"//INPARINI???
+  ],
+
+  IN_HACER: [
+    "PRI18",
+    "PRI18 CE8",
+  ],
+
+  IN_DO_MIENTRAS: [
+    "PRI17 OP_CONDICION CE13",
+    "CE9 PRI17 OP_CONDICION CE13",
+  ],
+
+  IN_MIENTRAS: [
+    "PRI17 OP_CONDICION CE8",
+    "PRI17 OP_CONDICION"
+  ],
+
+  IN_SEGUN: [
+    "PRI7 IDEN",
+    "PRI7 IDEN CE8",
+  ],
+
+  IN_CASO: [
+    "PRI8 VAL_CONSTANTE AUX_OPR",
+    "PRI8 CADENA AUX_OPR",
+  ],
+
+  IN_DEFECTO: [
+    "PRI12 AUX_OPR",
+  ],
+
+  IN_ROMPER: [
+    "PRI9 CE13",
+  ],
+
+  OP_ARITMETICA: [
+    "VAL_CONSTANTE AUX_OPA VAL_CONSTANTE",
+    "IDEN AUX_OPA IDEN",
+    "IDEN AUX_OPA VAL_CONSTANTE",
+    "VAL_CONSTANTE AUX_OPA IDEN",
+
+    "OP_ARITMETICA AUX_OPA OP_ARITMETICA",
+    "IDEN AUX_OPA OP_ARITMETICA",
+    "OP_ARITMETICA AUX_OPA IDEN",
+    "VAL_CONSTANTE AUX_OPA OP_ARITMETICA",
+    "OP_ARITMETICA AUX_OPA VAL_CONSTANTE",
+
+    "CE6 OP_ARITMETICA CE7",
+  ],
+
+  OP_RELACIONAL: [
+    "VAL_CONSTANTE AUX_OPR VAL_CONSTANTE",
+    "IDEN AUX_OPR IDEN",
+    "IDEN AUX_OPR VAL_CONSTANTE",
+    "VAL_CONSTANTE AUX_OPR IDEN",
+
+    "OP_RELACIONAL AUX_OPR OP_RELACIONAL",
+    "OP_RELACIONAL AUX_OPR IDEN",
+    "VAL_CONSTANTE AUX_OPR OP_RELACIONAL",
+    "OP_RELACIONAL AUX_OPR VAL_CONSTANTE",
+    "IDEN AUX_OPR OP_RELACIONAL",
+
+    "CE6 OP_RELACIONAL CE7",
+
+    "OP_ARITMETICA AUX_OPR OP_RELACIONAL",
+    "OP_RELACIONAL AUX_OPR OP_ARITMETICA",
+
+    "OP_ARITMETICA AUX_OPR IDEN",
+    "IDEN AUX_OPR OP_ARITMETICA",
+
+    "OP_ARITMETICA AUX_OPR VAL_CONSTANTE",
+    "VAL_CONSTANTE AUX_OPR OP_ARITMETICA",
+
+    "OP_ARITMETICA AUX_OPR OP_ARITMETICA",
+
+    "VAL_CONSTANTE AUX_OPR2 VAL_CONSTANTE",
+    "IDEN AUX_OPR2 IDEN",
+    "IDEN AUX_OPR2 VAL_CONSTANTE",
+    "IDEN AUX_OPR2 CADENA",
+    "CADENA AUX_OPR2 IDEN",
+    "VAL_CONSTANTE AUX_OPR2 IDEN",
+
+    "OP_RELACIONAL AUX_OPR2 OP_RELACIONAL",
+    "OP_RELACIONAL AUX_OPR2 IDEN",
+    "VAL_CONSTANTE AUX_OPR2 OP_RELACIONAL",
+    "OP_RELACIONAL AUX_OPR2 VAL_CONSTANTE",
+    "IDEN AUX_OPR2 OP_RELACIONAL",
+
+    "CE6 OP_RELACIONAL CE7",
+
+    "OP_ARITMETICA AUX_OPR2 OP_RELACIONAL",
+    "OP_RELACIONAL AUX_OPR2 OP_ARITMETICA",
+
+    "OP_ARITMETICA AUX_OPR2 IDEN",
+    "IDEN AUX_OPR2 OP_ARITMETICA",
+
+    "OP_ARITMETICA AUX_OPR2 VAL_CONSTANTE",
+    "VAL_CONSTANTE AUX_OPR2 OP_ARITMETICA",
+
+    "OP_ARITMETICA AUX_OPR2 OP_ARITMETICA",
+  ],
+
+  OP_LOGICA: [
+    //NOT
+    "OPL1 VAL_BOLEANO",
+    "CE6 OPL1 VAL_BOLEANO CE7",
+    "OPL1 IDEN",
+    "CE6 OPL1 IDEN CE7",
+    "OPL1 OP_RELACIONAL",
+    "CE6 OPL1 OP_RELACIONAL CE7",
+    "OPL1 OP_LOGICA",
+    "CE6 OPL1 OP_LOGICA CE7",
+    "OPL1 CE6 OP_LOGICA CE7",
+
+    "IDEN AUX_OPL IDEN",
+    "VAL_BOLEANO AUX_OPL VAL_BOLEANO",
+    "OP_LOGICA AUX_OPL OP_LOGICA",
+    "OP_RELACIONAL AUX_OPL OP_RELACIONAL",
+    "VAL_CONSTANTE AUX_OPL VAL_CONSTANTE",
+    "OP_CADENA_COMPARACION AUX_OPL OP_CADENA_COMPARACION",
+
+    "VAL_CONSTANTE AUX_OPL IDEN",
+    "VAL_CONSTANTE AUX_OPL VAL_BOLEANO",
+    "VAL_CONSTANTE AUX_OPL OP_LOGICA",
+    "VAL_CONSTANTE AUX_OPL OP_RELACIONAL",
+    "VAL_CONSTANTE AUX_OPL OP_CADENA_COMPARACION",
+
+    "IDEN AUX_OPL VAL_BOLEANO",
+    "IDEN AUX_OPL OP_LOGICA",
+    "IDEN AUX_OPL OP_RELACIONAL",
+    "IDEN AUX_OPL VAL_CONSTANTE",
+    "IDEN AUX_OPL OP_CADENA_COMPARACION",
+
+    "VAL_BOLEANO AUX_OPL IDEN",
+    "VAL_BOLEANO AUX_OPL OP_LOGICA",
+    "VAL_BOLEANO AUX_OPL OP_RELACIONAL",
+    "VAL_BOLEANO AUX_OPL VAL_CONSTANTE",
+    "VAL_BOLEANO AUX_OPL OP_CADENA_COMPARACION",
+    "VAL_BOLEANO AUX_OPL VAL_BOLEANO",
+
+    "OP_LOGICA AUX_OPL IDEN",
+    "OP_LOGICA AUX_OPL VAL_BOLEANO",
+    "OP_LOGICA AUX_OPL OP_RELACIONAL",
+    "OP_LOGICA AUX_OPL VAL_CONSTANTE",
+    "OP_LOGICA AUX_OPL OP_CADENA_COMPARACION",
+
+    "OP_RELACIONAL AUX_OPL IDEN",
+    "OP_RELACIONAL AUX_OPL VAL_BOLEANO",
+    "OP_RELACIONAL AUX_OPL OP_LOGICA",
+    "OP_RELACIONAL AUX_OPL VAL_CONSTANTE",
+    "OP_RELACIONAL AUX_OPL OP_CADENA_COMPARACION",
+
+    "OP_CADENA_COMPARACION AUX_OPL IDEN",
+    "OP_CADENA_COMPARACION AUX_OPL VAL_BOLEANO",
+    "OP_CADENA_COMPARACION AUX_OPL OP_LOGICA",
+    "OP_CADENA_COMPARACION AUX_OPL VAL_CONSTANTE",
+    "OP_CADENA_COMPARACION AUX_OPL OP_RELACIONAL",
+
+    "CE6 OPL_LOGICA CE7",
+  ],
+
+  OP_CADENA_CONCATENACION: [
+    "CADENA AUX_OPA CADENA",
+    "CADENA AUX_OPA IDEN",
+    "IDEN AUX_OPA CADENA",
+    "CE6 CADENA CE7",
+    "OP_CADENA_CONCATENACION AUX_OPA OP_CADENA_CONCATENACION",
+    "CE6 OP_CADENA_CONCATENACION CE7",
+    "OP_CADENA_CONCATENACION AUX_OPA OP_ARITMETICA",
+    "OP_CADENA_CONCATENACION AUX_OPA OP_LOGICA ",
+    "OP_ARITMETICA AUX_OPA OP_ARITMETICA OP_CADENA_CONCATENACION",
+    "OP_LOGICA AUX_OPA OP_CADENA_CONCATENACION"
+  ],
+
+  OP_CADENA_COMPARACION: [
+    "CADENA AUX_OPR CADENA",
+    "CADENA AUX_OPR IDEN",
+    "IDEN AUX_OPR CADENA",
+    "CADENA AUX_OPR2 CADENA",
+    "CADENA AUX_OPR2 IDEN",
+    "IDEN AUX_OPR2 CADENA",
+    "CE6 OP_CADENA_COMPARACION CE7",
+  ],
+
+  OP_CONDICION: [
+    "OP_RELACIONAL",
+    "OP_LOGICA",
+    "OP_CADENA_COMPARACION",
+    "VAL_BOLEANO",
+
+    "OP_CONDICION AUX_OPL OP_CONDICION",
+    "OP_CADENA_COMPARACION AUX_OPL OP_CADENA_COMPARACION",
+
+    "OP_CONDICION AUX_OPL OP_RELACIONAL",
+    "OP_CONDICION AUX_OPL OP_LOGICA",
+    "OP_CONDICION AUX_OPL OP_CADENA_COMPARACION",
+    "OP_CONDICION AUX_OPL VAL_BOLEANO",
+    "OP_CONDICION AUX_OPL IDEN",
+
+    "OP_RELACIONAL AUX_OPL OP_CONDICION",
+    "OP_LOGICA AUX_OPL OP_CONDICION",
+    "OP_CADENA_COMPARACION AUX_OPL OP_CONDICION",
+    "VAL_BOLEANO AUX_OPL OP_CONDICION",
+    "IDEN AUX_OPL OP_CONDICION",
+
+    "OP_CONDICION AUX_OPR2 OP_CONDICION",
+    "OP_CADENA_COMPARACION AUX_OPR2 OP_CADENA_COMPARACION",
+
+    "OP_CONDICION AUX_OPR2 OP_RELACIONAL",
+    "OP_CONDICION AUX_OPR2 OP_LOGICA",
+    "OP_CONDICION AUX_OPR2 OP_CADENA_COMPARACION",
+    "OP_CONDICION AUX_OPR2 VAL_BOLEANO",
+    "OP_CONDICION AUX_OPR2 IDEN",
+
+    "OP_RELACIONAL AUX_OPR2 OP_CONDICION",
+    "OP_LOGICA AUX_OPR2 OP_CONDICION",
+    "OP_CADENA_COMPARACION AUX_OPR2 OP_CONDICION",
+    "VAL_BOLEANO AUX_OPR2 OP_CONDICION",
+    "IDEN AUX_OPR2 OP_CONDICION",
+
+    "VAL_BOLEANO AUX_OPR2 VAL_BOLEANO",
+
+    "OPL1 OP_CONDICION",
+    "CE6 OPL1 OP_CONDICION CE7",
+
+    "CE6 OP_CONDICION CE7",
+  ],
+
+  IN_PARINI: [
+    "CE8", //{
+  ],
+
+  IN_PARFIN: [
+    "CE9 CE13", //};
+  ],
+
+  // IN_PARMIDLE: [
+  //   "CE9", //}
+  // ],
+
+  IN_CONTINUAR: [
+    "PRI10 CE13",
+  ],
+};
+
+const gramaticasTerminales = [
+  "IN_ASIGNACION",
+  "IN_SI",
+  "IN_SINOSI",
+  "IN_SINO",
+  "IN_CICLO",
+  "IN_HACER",
+  "IN_CONTINUAR",
+  "IN_ROMPER",
+  "IN_DO_MIENTRAS",
+  "IN_MIENTRAS",
+  "IN_SEGUN",
+  "IN_CASO",
+  "IN_DEFECTO",
+  "IN_IO",
+  "IN_COMENTARIO",
+  "IN_PARINI",
+  "IN_PARMIDLE",
+  "IN_PARFIN",
+  "PR50 CE6 VAL_CONSTANTE CE80 VAL_CONSTANTE CE7",
+  "PR51 PR52 IN_ASIGNACION PR53 OP_CONDICION PR54 VAL_CONSTANTE",
+  "PRINI", "PRFIN"
+];
+
+let evaluacionSintaxis = "";
+const reduceCadena = (origen, puntero, fin, nuevo) => {
+  const origenTokens = origen.split(" ");
+  return origenTokens
+    .slice(0, puntero)
+    .concat([`${nuevo}`])
+    .concat(origenTokens.slice(fin, origenTokens.length))
+    .join(" ");
+};
+
+function recorridoCadenaTokens(tokensInput, buscoGramaticaIndividual) {
+  let tokensInputToArray = tokensInput.split(" "), longitudTokens = tokensInputToArray.length;
+  let gramaticaSeleccionada = buscoGramaticaIndividual ? gramaticasIndividuales : gramaticasMultiples; //Primero busca si existe una gramatica de 1 de longitud que pueda ser cambiada.  
+  evaluacionSintaxis += "-->  " + tokensInput + "\n";
+
+  //Busca segun la gramatica seleccionada..
+  for (let contLongitud = longitudTokens - 1; contLongitud >= 0; contLongitud--) {
+    for (const [k, v] of Object.entries(gramaticaSeleccionada)) {
+      for (let puntero = 0; puntero < longitudTokens - contLongitud; puntero++) {
+        const fin = contLongitud + puntero + 1;
+        if (v.find((e) => e === tokensInputToArray.slice(puntero, fin).join(" "))) {
+          tokensInput = reduceCadena(tokensInput, puntero, fin, k);
+          return recorridoCadenaTokens(tokensInput, buscoGramaticaIndividual);
+        }
+      }
+    }
+  }
+  
+  //En caso de no encontrar similitudes en gramaticas de 1, busca para longitud n
+  if(buscoGramaticaIndividual) return recorridoCadenaTokens(tokensInput, false);
+
+  //Cuando hayas terminado todas las de longitud n, y ya no encontraste mas similitudes, entonces busca si el resultado es terminal
+  return gramaticasTerminales.find((val) => val === tokensInput) ? "S" : "ERR";
+}
+
+fs.readFile("lexicoTokens.tmpalscript", "utf-8", (err, data) => {
+  if (!err) {
+    const repairedData = data.replace(/[\r]+/g, '').trimEnd();
+    const manipulableData = repairedData.split("\n");
+
+    for (const linea of manipulableData) {
+      if (linea === '') continue;
+      if (recorridoCadenaTokens(linea, true) === "S") evaluacionSintaxis += "-->  S\n\n";
+      else evaluacionSintaxis += "-->  ERR\n\n";
+    }
+
+    fs.writeFile(
+      "sintaxisResult.tmpalscript",
+      evaluacionSintaxis.trimEnd(),
+      (err) => {
+        if (err) {
+          console.error("Algo sucedio");
+        }
+      }
+    );
+  }
+});
