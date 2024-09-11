@@ -119,6 +119,12 @@ namespace Interfaz
         private static MatrizConnection _instance = null;
         private string TABLA_MATRIZ = "[dbo].[matriz$]";
         #endregion
+        #region Diccionario
+        // Diccionario de identificadores
+        Dictionary<string, int> idenDictionary = new Dictionary<string, int>();
+        int idenCounter = 1;
+        #endregion
+
         /* Compilar Lexico linea por linea*/
         private void btnLexicoDebug_Click(object sender, EventArgs e)
         {
@@ -126,21 +132,31 @@ namespace Interfaz
             string estado = "1";
             string palabraEvaluada = "";
             string lineaTokens = "";
-            string tokenFile = "";
+            string tokenFile = "";            
 
             // Obtener todas las líneas del RichTextBox
             string[] lines = txtCodificacion.Lines;
+            int lineNumber = 1; // Line number counter
 
             // Procesar cada línea del codigo fuente
             foreach (string line in lines)
             {
                 txtLineaEvalua.Text = line;
                 txtTokens.Text = "";
-                lineaTokens = "";
-                //txtLexico.Text = ;
+                lineaTokens = "";               
+                txtNumLinea1.Text = lineNumber.ToString();
+                txtNumLinea2.Text = lineNumber.ToString();
+
                 // Agregar delimitadores especiales a la línea actual
                 string inputCode = line + "♠♦";
                 inputCode = inputCode.Replace(" ", "♠♦");
+
+                //Regex
+                string pattern = @"(\S)([();\{\}])|([();\{\}])(\S)|(\()(\S+)(\))|(\{)(\S+)(\})";
+                inputCode = Regex.Replace(inputCode, pattern, "$1♠♦$2$3♠♦$4♠♦$5").Trim();
+                inputCode = Regex.Replace(inputCode, @"(?:♠♦)+", "♠♦");
+                inputCode = inputCode.Replace("♠♠♦♦", "");
+                inputCode = Regex.Replace(inputCode, @"(^♠♦)+", "", RegexOptions.Multiline);
 
                 // Procesar cada carácter de la línea actual
                 foreach (char letter in inputCode)
@@ -163,6 +179,9 @@ namespace Interfaz
                     {
                         case '.':
                             seleccion = "Cpunto";
+                            break;
+                        case '!':
+                            seleccion = "Cnot";
                             break;
                         case '}':
                             seleccion = "C}";
@@ -198,6 +217,7 @@ namespace Interfaz
                             string query = "SELECT [" + seleccion + "] FROM [dbo].[matriz$] WHERE Estado = @estado";
                             using (SqlCommand comando = new SqlCommand(query, conexion))
                             {
+                                //MessageBox.Show(inputCode); 
                                 comando.Parameters.AddWithValue("@estado", estado);
 
                                 var resultado = comando.ExecuteScalar();
@@ -213,8 +233,29 @@ namespace Interfaz
                                     if (seleccion == "CAT" && estado[0] != '2')
                                     {
                                         estado = "1";
+                                        
+                                        //Detectar Identificadores
+                                        if (resultado.ToString() == "IDEN")
+                                        {
+                                            if (!idenDictionary.ContainsKey(palabraEvaluada))
+                                            {
+                                                // Nuevo IDEN, agregar al diccionario e incrementar el contador
+                                                idenDictionary[palabraEvaluada] = idenCounter;
+                                                idenCounter++;
+                                                this.dgvIdentificadores.Rows.Add(resultado.ToString() + "#" + idenDictionary[palabraEvaluada], palabraEvaluada, "N/A", "");
+                                            }
+
+                                            // Agregar el IDEN con su numero correspondiente
+                                            lineaTokens += resultado.ToString() + "#" + idenDictionary[palabraEvaluada] + " ";
+
+                                            
+                                        }
+                                        else
+                                        {
+                                            // Tokens No-IDEN
+                                            lineaTokens += resultado.ToString() + " ";
+                                        }
                                         palabraEvaluada = "";
-                                        lineaTokens = lineaTokens + resultado.ToString() + " ";
                                         txtTokens.Text = lineaTokens;
                                     }
 
@@ -233,15 +274,26 @@ namespace Interfaz
 
                     MessageBox.Show("Evaluando");
                 }
-                
-                tokenFile = tokenFile+"\n"+ lineaTokens;
+
+                if (string.IsNullOrEmpty(tokenFile))
+                {
+                    tokenFile = lineaTokens; // No new line on the first iteration
+                }
+                else
+                {
+                    tokenFile = tokenFile + "\n" + lineaTokens; // Add a new line before subsequent tokens
+                }
+
                 txtLexico.Text = tokenFile;
-                
+                lineNumber++;
             }
 
 
                    
         }
+
+
+
 
         /* Compilar Sintactico*/
         private void btnSintaxis_Click(object sender, EventArgs e) {

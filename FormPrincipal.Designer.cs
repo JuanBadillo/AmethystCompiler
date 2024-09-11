@@ -82,10 +82,13 @@ namespace Interfaz {
             this.txtEstadoSig = new System.Windows.Forms.TextBox();
             this.btnLexicoDebug = new System.Windows.Forms.Button();
             this.txtLineaEvalua = new System.Windows.Forms.TextBox();
-            this.textBox2 = new System.Windows.Forms.TextBox();
-            this.textBox3 = new System.Windows.Forms.TextBox();
+            this.txtNumLinea1 = new System.Windows.Forms.TextBox();
+            this.txtNumLinea2 = new System.Windows.Forms.TextBox();
             this.txtTokens = new System.Windows.Forms.TextBox();
             this.txtPalabra = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.label8 = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dgvIdentificadores)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvErrores)).BeginInit();
             this.panel1.SuspendLayout();
@@ -168,7 +171,6 @@ namespace Interfaz {
             this.btnLimpiar.TabIndex = 3;
             this.btnLimpiar.Text = "🧹 Limpiar";
             this.btnLimpiar.UseVisualStyleBackColor = false;
-            this.btnLimpiar.Visible = false;
             this.btnLimpiar.Click += new System.EventHandler(this.btnLimpiar_Click);
             // 
             // dgvIdentificadores
@@ -783,7 +785,7 @@ namespace Interfaz {
             this.txtEstado.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.txtEstado.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtEstado.ForeColor = System.Drawing.SystemColors.Window;
-            this.txtEstado.Location = new System.Drawing.Point(672, 95);
+            this.txtEstado.Location = new System.Drawing.Point(750, 95);
             this.txtEstado.Name = "txtEstado";
             this.txtEstado.Size = new System.Drawing.Size(100, 19);
             this.txtEstado.TabIndex = 1023;
@@ -794,7 +796,7 @@ namespace Interfaz {
             this.txtEstadoSig.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.txtEstadoSig.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtEstadoSig.ForeColor = System.Drawing.SystemColors.Window;
-            this.txtEstadoSig.Location = new System.Drawing.Point(789, 95);
+            this.txtEstadoSig.Location = new System.Drawing.Point(877, 95);
             this.txtEstadoSig.Name = "txtEstadoSig";
             this.txtEstadoSig.Size = new System.Drawing.Size(100, 19);
             this.txtEstadoSig.TabIndex = 1025;
@@ -826,31 +828,31 @@ namespace Interfaz {
             this.txtLineaEvalua.Size = new System.Drawing.Size(513, 19);
             this.txtLineaEvalua.TabIndex = 1026;
             // 
-            // textBox2
+            // txtNumLinea1
             // 
-            this.textBox2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(131)))), ((int)(((byte)(80)))), ((int)(((byte)(159)))));
-            this.textBox2.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.textBox2.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(172)))), ((int)(((byte)(214)))));
-            this.textBox2.Location = new System.Drawing.Point(501, 64);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(51, 19);
-            this.textBox2.TabIndex = 1027;
-            this.textBox2.Text = "1";
-            this.textBox2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txtNumLinea1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(131)))), ((int)(((byte)(80)))), ((int)(((byte)(159)))));
+            this.txtNumLinea1.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.txtNumLinea1.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtNumLinea1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(172)))), ((int)(((byte)(214)))));
+            this.txtNumLinea1.Location = new System.Drawing.Point(501, 64);
+            this.txtNumLinea1.Name = "txtNumLinea1";
+            this.txtNumLinea1.Size = new System.Drawing.Size(51, 19);
+            this.txtNumLinea1.TabIndex = 1027;
+            this.txtNumLinea1.Text = "1";
+            this.txtNumLinea1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
-            // textBox3
+            // txtNumLinea2
             // 
-            this.textBox3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(131)))), ((int)(((byte)(80)))), ((int)(((byte)(159)))));
-            this.textBox3.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.textBox3.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBox3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(172)))), ((int)(((byte)(214)))));
-            this.textBox3.Location = new System.Drawing.Point(501, 125);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(51, 19);
-            this.textBox3.TabIndex = 1029;
-            this.textBox3.Text = "1";
-            this.textBox3.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txtNumLinea2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(131)))), ((int)(((byte)(80)))), ((int)(((byte)(159)))));
+            this.txtNumLinea2.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.txtNumLinea2.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtNumLinea2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(200)))), ((int)(((byte)(172)))), ((int)(((byte)(214)))));
+            this.txtNumLinea2.Location = new System.Drawing.Point(501, 125);
+            this.txtNumLinea2.Name = "txtNumLinea2";
+            this.txtNumLinea2.Size = new System.Drawing.Size(51, 19);
+            this.txtNumLinea2.TabIndex = 1029;
+            this.txtNumLinea2.Text = "1";
+            this.txtNumLinea2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // txtTokens
             // 
@@ -869,10 +871,43 @@ namespace Interfaz {
             this.txtPalabra.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.txtPalabra.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtPalabra.ForeColor = System.Drawing.SystemColors.Window;
-            this.txtPalabra.Location = new System.Drawing.Point(553, 95);
+            this.txtPalabra.Location = new System.Drawing.Point(564, 95);
             this.txtPalabra.Name = "txtPalabra";
             this.txtPalabra.Size = new System.Drawing.Size(100, 19);
             this.txtPalabra.TabIndex = 1030;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label7.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.label7.Location = new System.Drawing.Point(501, 96);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(60, 16);
+            this.label7.TabIndex = 1031;
+            this.label7.Text = "Palabra";
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label8.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.label8.Location = new System.Drawing.Point(695, 96);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(51, 16);
+            this.label8.TabIndex = 1032;
+            this.label8.Text = "Estado";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Font = new System.Drawing.Font("Century Gothic", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label9.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.label9.Location = new System.Drawing.Point(854, 94);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(21, 16);
+            this.label9.TabIndex = 1033;
+            this.label9.Text = "→";
             // 
             // FormPrincipal
             // 
@@ -881,10 +916,13 @@ namespace Interfaz {
             this.AutoScroll = true;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(27)))), ((int)(((byte)(5)))), ((int)(((byte)(42)))));
             this.ClientSize = new System.Drawing.Size(1777, 1058);
+            this.Controls.Add(this.label9);
+            this.Controls.Add(this.label8);
+            this.Controls.Add(this.label7);
             this.Controls.Add(this.txtPalabra);
-            this.Controls.Add(this.textBox3);
+            this.Controls.Add(this.txtNumLinea2);
             this.Controls.Add(this.txtTokens);
-            this.Controls.Add(this.textBox2);
+            this.Controls.Add(this.txtNumLinea1);
             this.Controls.Add(this.txtLineaEvalua);
             this.Controls.Add(this.btnLexicoDebug);
             this.Controls.Add(this.txtEstadoSig);
@@ -989,10 +1027,13 @@ namespace Interfaz {
         private System.Windows.Forms.TextBox txtEstadoSig;
         private System.Windows.Forms.Button btnLexicoDebug;
         private System.Windows.Forms.TextBox txtLineaEvalua;
-        private System.Windows.Forms.TextBox textBox2;
-        private System.Windows.Forms.TextBox textBox3;
+        private System.Windows.Forms.TextBox txtNumLinea1;
+        private System.Windows.Forms.TextBox txtNumLinea2;
         private System.Windows.Forms.TextBox txtTokens;
         private System.Windows.Forms.TextBox txtPalabra;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label label9;
     }
 }
 
