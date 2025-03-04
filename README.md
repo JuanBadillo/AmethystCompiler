@@ -3,7 +3,7 @@
 # Amethyst
 Compilador del lenguaje **Amethyst**, un lenguaje de paradigma estructurado en español.
 
-**Incluye**
+> ## **Incluye**
 > Analizador lexico \
 Analizador sintactico \
 Analizador semantico \
